@@ -33,14 +33,22 @@ export default function SendMessage() {
   const [isSuggestLoading, setisSuggestLoading] = useState(false);
   const params = useParams<{ username: string }>();
   const username = params.username;
-  const [suggestionMessage, setsuggestionMessage] = useState([])
-  function parseQuestions(messageString : string) {
-    const questions = messageString.split("||");
-    return questions;
+  const [suggestionMessage, setsuggestionMessage] = useState<string | string[]>(
+    ""
+  );
+
+  function parseQuestions(messageString: string | string[]): string[] {
+    if (typeof messageString === "string") {
+      // If messageString is a string, split it by "||"
+      return messageString.split("||");
+    } else {
+      // If messageString is already an array, return it as is
+      return messageString;
+    }
   }
   useEffect(() => {
     const data = parseQuestions(initialMessageString);
-    setsuggestionMessage(data)
+    setsuggestionMessage(data);
   }, []);
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
@@ -57,9 +65,9 @@ export default function SendMessage() {
   const fetchSuggestedMessages = async () => {
     try {
       const response = await axios.get("/api/suggest-messages");
-      console.log(response.data.suggestion)
-      const result = parseQuestions(response.data.suggestion)
-      setsuggestionMessage(result)
+      console.log(response.data.suggestion);
+      const result = parseQuestions(response.data.suggestion);
+      setsuggestionMessage(result);
     } catch (error) {
       console.log(error);
     }
@@ -108,7 +116,11 @@ export default function SendMessage() {
                   <Textarea
                     placeholder="Write your anonymous message here"
                     className="resize-none py-2"
-                    style={{border : "1px solid white", background : "rgba(24, 24, 27, 0.5)", paddingTop :"10px"}}
+                    style={{
+                      border: "1px solid white",
+                      background: "rgba(24, 24, 27, 0.5)",
+                      paddingTop: "10px",
+                    }}
                     {...field}
                   />
                 </FormControl>
@@ -118,18 +130,21 @@ export default function SendMessage() {
           />
           <div className="flex justify-center">
             {isLoading ? (
-              <Button disabled
-              className="border border-white"
-              style={{border : "1px solid white"}}
+              <Button
+                disabled
+                className="border border-white"
+                style={{ border: "1px solid white" }}
               >
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Please wait
               </Button>
             ) : (
               <Button
-              className="border border-white"
-              style={{border : "1px solid white"}}
-              type="submit" disabled={isLoading || !messageContent}>
+                className="border border-white"
+                style={{ border: "1px solid white" }}
+                type="submit"
+                disabled={isLoading || !messageContent}
+              >
                 Send It
               </Button>
             )}
@@ -140,8 +155,8 @@ export default function SendMessage() {
       <div className="space-y-4 my-8 bg-zinc-900 text-white">
         <div className="space-y-2">
           <Button
-          className="border border-white my-4"
-          style={{border : "1px solid white"}}
+            className="border border-white my-4"
+            style={{ border: "1px solid white" }}
             onClick={fetchSuggestedMessages}
             disabled={isSuggestLoading}
           >
@@ -149,21 +164,36 @@ export default function SendMessage() {
           </Button>
           <p>Click on any message below to select it.</p>
         </div>
-        <Card style={{border : "1px solid white", background : "rgba(24, 24, 27, 0.5)"}}>
+        <Card
+          style={{
+            border: "1px solid white",
+            background: "rgba(24, 24, 27, 0.5)",
+          }}
+        >
           <CardHeader>
             <h3 className="text-xl font-semibold text-white">Messages</h3>
           </CardHeader>
           <CardContent className="flex flex-col space-y-4">
-            {suggestionMessage.map((message, index) => (
+            {Array.isArray(suggestionMessage) ? (
+              suggestionMessage.map((message, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  className="mb-2"
+                  onClick={() => handleMessageClick(message)}
+                >
+                  {message}
+                </Button>
+              ))
+            ) : (
               <Button
-                key={index}
                 variant="outline"
                 className="mb-2"
-                onClick={() => handleMessageClick(message)}
+                onClick={() => handleMessageClick(suggestionMessage)}
               >
-                {message}
+                {suggestionMessage}
               </Button>
-            ))}
+            )}
           </CardContent>
         </Card>
       </div>
@@ -172,9 +202,11 @@ export default function SendMessage() {
         <div className="mb-4">Get Your Message Board</div>
         <Link href={"/sign-up"}>
           <Button
-          className="border border-white"
-          style={{border : "1px solid white"}}
-          >Create Your Account</Button>
+            className="border border-white"
+            style={{ border: "1px solid white" }}
+          >
+            Create Your Account
+          </Button>
         </Link>
       </div>
     </div>
