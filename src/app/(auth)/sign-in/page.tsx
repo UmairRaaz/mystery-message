@@ -47,7 +47,7 @@ export default function SignInForm() {
       });
     }
     if(result?.url){
-      router.push("/")
+      router.replace("/dashboard")
     }
 
   };
