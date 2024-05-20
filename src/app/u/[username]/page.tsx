@@ -179,7 +179,7 @@ export default function SendMessage() {
                 <Button
                   key={index}
                   variant="outline"
-                  className="mb-2"
+                  className="mb-2 break-words whitespace-normal text-xs md:text-base"
                   onClick={() => handleMessageClick(message)}
                 >
                   {message}

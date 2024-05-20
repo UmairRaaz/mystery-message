@@ -40,7 +40,7 @@ const Navbar = () => {
           </Link>
           {/* nav links */}
           <div
-            className={`absolute left-0 right-0 -z-10 flex w-full flex-col gap-3  p-3 shadow transition-all duration-300 ease-in-out md:relative md:left-0 md:right-auto md:top-auto md:z-auto md:flex-row md:shadow-none bg-black md:bg-[#18181b] ${
+            className={`absolute left-0 right-0 -z-10 flex w-full flex-col gap-3  p-3 shadow transition-all duration-300 ease-in-out md:relative md:left-0 md:right-auto md:top-auto md:z-auto md:flex-row md:shadow-none bg-[#18181b] md:bg-[#18181b] ${
               showNav ? "top-[60px]" : "top-[-165px]"
             }`}
           >
